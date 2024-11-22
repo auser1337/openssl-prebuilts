@@ -1,0 +1,9 @@
+name: Build
+
+on: [ push ]
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - run: echo "Hello, Windows!"
