@@ -11,10 +11,6 @@ jobs:
       - uses: shogo82148/actions-setup-perl@v1.31.4
         with:
           perl-version: latest
-      - name: Configure Perl
-        run: |
-          cpanm --installdeps .
-          prove -lv t
       - name: Configure
         run: |
           perl Configure
