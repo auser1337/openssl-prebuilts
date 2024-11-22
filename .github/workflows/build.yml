@@ -14,6 +14,6 @@ jobs:
       - name: Configure
         run: |
           cd openssl
-          perl Configure
+          perl config
       - name: Build
         run: make
