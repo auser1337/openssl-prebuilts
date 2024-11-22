@@ -18,6 +18,7 @@ jobs:
         run: |
           perl Configure
         working-directory: ./openssl
+      - uses: ilammy/msvc-dev-cmd@v1.13.0
       - name: Build
         run: nmake
         working-directory: ./openssl
