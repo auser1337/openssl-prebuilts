@@ -19,5 +19,5 @@ jobs:
           perl Configure
         working-directory: ./openssl
       - name: Build
-        run: make
+        run: nmake
         working-directory: ./openssl
