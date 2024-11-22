@@ -13,6 +13,7 @@ jobs:
           perl-version: latest
       - name: Configure
         run: |
+          ls -l ./openssl
           perl config
         working-directory: ./openssl
       - name: Build
