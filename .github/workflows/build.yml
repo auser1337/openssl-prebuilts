@@ -8,12 +8,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: true
       - uses: shogo82148/actions-setup-perl@v1.31.4
         with:
           perl-version: latest
       - name: Configure
         run: |
-          ls
           perl config
         working-directory: ./openssl
       - name: Build
