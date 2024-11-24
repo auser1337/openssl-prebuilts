@@ -3,7 +3,7 @@ name: Build
 on: [push]
 
 jobs:
-  windows:
+  windows-msvc:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,4 +31,80 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-openssl-include
+          path: ./openssl/include
+
+  windows-mingw:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: mingw-w64-x86_64-toolchain
+      - name: Configure
+        run: |
+          msys2 -c "cd openssl && ./Configure mingw64"
+      - name: Build
+        run: |
+          msys2 -c "cd openssl && make"
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-mingw-openssl-libs
+          path: ./openssl/*.a
+      - name: Upload include directory
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-mingw-openssl-include
+          path: ./openssl/include
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Setup dependencies
+        run: sudo apt-get install -y build-essential
+      - name: Configure
+        run: ./config
+        working-directory: ./openssl
+      - name: Build
+        run: make
+        working-directory: ./openssl
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-openssl-libs
+          path: ./openssl/*.a
+      - name: Upload include directory
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-openssl-include
+          path: ./openssl/include
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Configure
+        run: ./Configure darwin64-arm64-cc
+        working-directory: ./openssl
+      - name: Build
+        run: make
+        working-directory: ./openssl
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-openssl-libs
+          path: ./openssl/*.a
+      - name: Upload include directory
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-openssl-include
           path: ./openssl/include
