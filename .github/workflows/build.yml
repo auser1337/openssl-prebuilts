@@ -1,4 +1,4 @@
-name: Build
+name: Build and Release
 
 on: [push]
 
@@ -110,3 +110,45 @@ jobs:
         with:
           name: macos-openssl-include
           path: ./openssl/include
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [windows-msvc, windows-mingw, linux, macos]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Get the latest commit hash
+        id: get_commit
+        run: echo "LATEST_COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.LATEST_COMMIT }}
+          release_name: Release ${{ env.LATEST_COMMIT }}
+          body: |
+            Release created for commit ${{ env.LATEST_COMMIT }}
+          draft: false
+          prerelease: false
+      - name: Upload Windows MSVC binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-msvc-openssl-libs
+          path: ./openssl/*.lib
+      - name: Upload Windows MinGW binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-mingw-openssl-libs
+          path: ./openssl/*.a
+      - name: Upload Linux binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-openssl-libs
+          path: ./openssl/*.a
+      - name: Upload macOS binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-openssl-libs
+          path: ./openssl/*.a
