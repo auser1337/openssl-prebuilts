@@ -44,6 +44,8 @@ jobs:
         with:
           update: true
           install: mingw-w64-x86_64-toolchain
+      - name: Install Make
+        run: msys2 -c "pacman -S --noconfirm make"
       - name: Configure
         run: |
           msys2 -c "cd openssl && ./Configure mingw64"
